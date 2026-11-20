@@ -1,0 +1,18 @@
+{
+  "name": "pod-platform",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": [
+    "apps/api",
+    "apps/web"
+  ],
+  "scripts": {
+    "start": "npm start --workspace @pod/api",
+    "build": "npm run build --workspaces --if-present",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "db:generate": "npm run db:generate --workspace @pod/api",
+    "db:migrate": "npm run db:migrate --workspace @pod/api",
+    "db:seed": "npm run db:seed --workspace @pod/api"
+  }
+}
