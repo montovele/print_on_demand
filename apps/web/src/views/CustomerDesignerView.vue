@@ -580,6 +580,10 @@ onMounted(() => {
               <path v-else d="M115 35 65 54 18 115l49 39 28-29v211h170V125l28 29 49-39-47-61-50-19c-10 13-27 21-65 21s-55-8-65-21Z" />
               <path class="mockup-neck" d="M115 35c12 26 35 42 65 42s53-16 65-42" />
             </svg>
+            <svg v-else-if="product.kind === 'socks'" class="mockup-shape" viewBox="0 0 360 360" role="img" aria-label="Calcetines personalizables">
+              <path d="M95 44h82v162c0 21-12 33-31 45l-46 29c-25 16-22 43 2 52 21 8 55 2 81-15l54-36c25-17 32-35 32-67V44h-82v153l-45 25V44Z" />
+              <path d="M95 44h82m82 0h-82M99 270c-17 12-27 30-20 45m184-45c17 12 27 30 20 45" fill="none" stroke="#00000020" stroke-width="4" />
+            </svg>
             <svg v-else-if="product.kind === 'mug'" class="mockup-shape" viewBox="0 0 360 300" role="img" aria-label="Taza personalizable">
               <path d="M66 54h200v198c0 18-14 32-32 32H98c-18 0-32-14-32-32V54Z" />
               <path class="mockup-handle" d="M266 91h28c34 0 38 84 0 84h-28" />

@@ -84,6 +84,7 @@ const stickerProducts = [
   { id: "stickers-transparentes", name: "Transparentes", description: "Sticker impreso en material transparente con opciones de tinta blanca y acabado.", variants: ["25", "50", "100", "200", "500", "1,000", "5,000", "10,000"] },
   { id: "stikers-troqueladas-die-cut", name: "Troqueladas · Die-Cut", description: "Sticker individual cortado siguiendo el contorno exterior del diseño.", variants: ["25", "50", "100", "200", "500", "1,000", "5,000", "10,000"] },
 ] as const;
+const stickerProductIds = new Set<string>(stickerProducts.map((product) => product.id));
 
 async function getStorefrontTenant() {
   const tenantId = config.STOREFRONT_TENANT_ID;
@@ -157,20 +158,21 @@ router.get("/catalog", asyncRoute(async (_req, res) => {
           currency: variant.currency,
         })),
       };
-    }).filter((product) => product.variants.length > 0),
+    }),
     catalogProducts: catalogOnlyProducts
-        .filter((product) => product.providerCode !== "pegapega")
+        .filter((product) => product.providerCode !== "pegapega"
+          || !product.externalProductId
+          || !stickerProductIds.has(product.externalProductId))
         .flatMap((product) => {
           const prices = product.variants
             .filter((variant) => variant.salePrice.gt(0) && variant.currency === "MXN")
             .map((variant) => variant.salePrice.toNumber());
-          if (prices.length === 0) return [];
           return [{
             productId: product.id,
             name: product.name,
             description: product.description,
             productType: product.productType,
-            startingPrice: Math.min(...prices),
+            startingPrice: prices.length ? Math.min(...prices) : null,
           }];
         }),
   });

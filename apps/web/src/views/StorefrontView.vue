@@ -35,7 +35,7 @@ interface PublishedCatalogProduct {
   name: string;
   description: string | null;
   productType: string;
-  startingPrice: number;
+  startingPrice: number | null;
 }
 
 type ArtworkInteractionMode = "move" | "resize";
@@ -137,6 +137,25 @@ const customizableProducts = computed(() => publishedDesignerProducts.value.flat
 const visiblePublishedCatalogProducts = computed(() => publishedCatalogProducts.value.filter((product) =>
   `${product.name} ${product.productType} ${product.description ?? ""}`.toLowerCase().includes(search.value.trim().toLowerCase()),
 ));
+const publishedCatalogSections = computed(() => {
+  const sections = new Map<string, PublishedCatalogProduct[]>();
+  const categoryByType: Record<string, string> = {
+    "phone-case": "Accesorios",
+    "label-sheet": "Etiquetas",
+    "label-roll": "Etiquetas",
+    custom: "Otros",
+    "custom-item": "Otros",
+  };
+  for (const product of visiblePublishedCatalogProducts.value) {
+    const category = getCustomerProductTemplate(product.productType)?.category
+      ?? categoryByType[product.productType]
+      ?? "Otros productos";
+    const section = sections.get(category) ?? [];
+    section.push(product);
+    sections.set(category, section);
+  }
+  return [...sections].map(([category, products]) => ({ category, products }));
+});
 const visibleProducts = computed(() => stickerCatalog.filter((product) =>
   (selectedCategory.value === "Todos" || product.category === selectedCategory.value)
   && `${product.name} ${product.category} ${product.description}`.toLowerCase().includes(search.value.trim().toLowerCase()),
@@ -352,7 +371,7 @@ function getPublishedDesignerPrice(productId: string) {
 function getDesignerAvailabilityLabel(productId: string) {
   if (catalogLoading.value) return "Consultando disponibilidad";
   if (catalogError.value) return "Disponibilidad no confirmada";
-  return getPublishedDesignerProduct(productId) ? "Personaliza y compra" : "Próximamente";
+  return getPublishedDesignerProduct(productId)?.variants.length ? "Personaliza y compra" : "Próximamente";
 }
 
 async function addStickerToCart() {
@@ -471,20 +490,24 @@ onUnmounted(() => {
           <span class="store-kicker">PRODUCTOS PUBLICADOS</span>
           <h3 id="published-catalog-title">Más productos en nuestro catálogo</h3>
         </div>
-        <div class="store-product-grid custom-product-grid">
-          <article v-for="product in visiblePublishedCatalogProducts" :key="product.productId" class="store-product-card published-catalog-product-card">
-            <div class="store-product-visual published-catalog-product-visual">
-              <span class="custom-product-availability-badge">PRÓXIMAMENTE</span>
-              <span class="published-catalog-product-icon" aria-hidden="true">◇</span>
-              <strong>{{ product.name }}</strong>
-            </div>
-            <div class="store-product-info">
-              <div><span>{{ product.productType === "custom" ? "Producto" : product.productType }}</span><h3>{{ product.name }}</h3></div>
-              <strong>Desde {{ formatCurrency(product.startingPrice) }}</strong>
-            </div>
-            <p v-if="product.description" class="published-catalog-product-description">{{ product.description }}</p>
-            <p class="store-product-link published-catalog-product-notice">Publicado · personalización y compra próximamente</p>
-          </article>
+        <div v-for="section in publishedCatalogSections" :key="section.category" class="published-catalog-section">
+          <h4 class="published-catalog-section-title">{{ section.category }}</h4>
+          <div class="store-product-grid custom-product-grid">
+            <article v-for="product in section.products" :key="product.productId" class="store-product-card published-catalog-product-card">
+              <div class="store-product-visual published-catalog-product-visual">
+                <span class="custom-product-availability-badge">PRÓXIMAMENTE</span>
+                <span class="published-catalog-product-icon" aria-hidden="true">◇</span>
+                <strong>{{ product.name }}</strong>
+              </div>
+              <div class="store-product-info">
+                <div><span>{{ product.productType === "custom" ? "Producto" : product.productType }}</span><h3>{{ product.name }}</h3></div>
+                <strong v-if="product.startingPrice !== null">Desde {{ formatCurrency(product.startingPrice) }}</strong>
+                <strong v-else>Precio próximamente</strong>
+              </div>
+              <p v-if="product.description" class="published-catalog-product-description">{{ product.description }}</p>
+              <p class="store-product-link published-catalog-product-notice">Publicado · personalización y compra próximamente</p>
+            </article>
+          </div>
         </div>
       </section>
       <p v-if="!catalogError && publishedStickerCount === 0" class="storefront-catalog-notice" role="status">
@@ -493,9 +516,8 @@ onUnmounted(() => {
       <p v-if="catalogError" class="store-demo-note">No fue posible consultar la disponibilidad actual. {{ catalogError }}</p>
       <p class="store-demo-note">Los precios de venta aparecen solo para productos publicados por Printly. Las fichas resumen medidas, materiales y variantes anunciadas por el proveedor; las dimensiones no publicadas se identifican como tales.</p>
       <a class="store-source-link" href="https://pegapega.mx/shop/" target="_blank" rel="noopener noreferrer">Ver catálogo y precios vigentes en Pegapega.mx <span>↗</span></a>
-    </section>
 
-    <section id="personaliza" class="custom-products-section">
+    <div id="personaliza" class="custom-products-section">
       <div class="store-section-heading">
         <div><span class="store-kicker">TU ESTUDIO DE PERSONALIZACIÓN</span><h2>Diseña prendas y objetos para ti.</h2></div>
         <p>Sube tu arte, agrega texto y ajusta la composición en una vista previa interactiva.</p>
@@ -532,6 +554,11 @@ onUnmounted(() => {
               <path class="custom-product-detail" d="M115 35c12 26 35 42 65 42s53-16 65-42M94 125v220m172-220v220M104 325h152" />
               <path class="custom-product-gloss" :fill="`url(#merch-gloss-${product.id})`" d="m66 57 30-12v275c-18-48-28-145-30-263Zm200 0-30-12v275c18-48 28-145 30-263Z" />
               <path v-if="product.kind === 'hoodie'" class="custom-product-detail" d="M132 68c11 26 28 39 48 39s37-13 48-39m-70 39 22 17 22-17m-53 164h70v48h-70Z" />
+            </svg>
+            <svg v-else-if="product.kind === 'socks'" class="custom-product-shape custom-apparel-shape" viewBox="0 0 360 360" aria-hidden="true">
+              <path :fill="`url(#merch-finish-${product.id})`" d="M95 44h82v162c0 21-12 33-31 45l-46 29c-25 16-22 43 2 52 21 8 55 2 81-15l54-36c25-17 32-35 32-67V44h-82v153l-45 25V44Z" />
+              <path class="custom-product-gloss" :fill="`url(#merch-gloss-${product.id})`" d="M105 54h62v154l-53 29-8-15V54Zm91 0h62v160c0 28-5 41-26 56l-36 24V54Z" />
+              <path class="custom-product-detail" d="M95 44h82m82 0h-82M99 270c-17 12-27 30-20 45m184-45c17 12 27 30 20 45" />
             </svg>
             <svg v-else-if="product.kind === 'mug'" class="custom-product-shape custom-drink-shape" viewBox="0 0 360 300" aria-hidden="true">
               <path class="custom-product-handle" d="M261 88h28c43 0 43 94 0 94h-28" />
@@ -617,6 +644,7 @@ onUnmounted(() => {
       <p v-if="catalogError" class="custom-products-note" role="alert">No se pudo verificar qué productos están disponibles para compra. {{ catalogError }}</p>
       <p v-else-if="!customizableProducts.length" class="custom-products-note">Aún no hay productos publicados que se puedan personalizar. Consulta el catálogo para ver los demás productos disponibles próximamente.</p>
       <p v-else class="custom-products-note">En esta sección solo aparecen productos publicados con una plantilla compatible para personalizarlos.</p>
+    </div>
     </section>
 
     <section class="store-cta">

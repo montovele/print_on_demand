@@ -1,4 +1,4 @@
-export type CustomerProductKind = "tee" | "hoodie" | "mug" | "bottle" | "tote" | "poster" | "pillow" | "puzzle" | "keychain" | "plaque" | "apron" | "cap" | "mousepad";
+export type CustomerProductKind = "tee" | "hoodie" | "socks" | "mug" | "bottle" | "tote" | "poster" | "pillow" | "puzzle" | "keychain" | "plaque" | "apron" | "cap" | "mousepad";
 
 export interface CustomerProduct {
   id: string;
@@ -109,6 +109,21 @@ export const customerProducts: CustomerProduct[] = [
 ];
 
 const additionalCustomerProducts: CustomerProduct[] = [
+  {
+    id: "socks",
+    templateId: "socks",
+    name: "Calcetines personalizados",
+    kind: "socks",
+    price: 0,
+    color: "#f7f7f5",
+    category: "Ropa",
+    variantLabel: "TALLA",
+    variants: ["22–24", "25–27", "28–30"],
+    colors: [
+      { name: "Blanco", value: "#f7f7f5" },
+      { name: "Negro", value: "#35363b" },
+    ],
+  },
   {
     id: "pillow",
     templateId: "pillow",

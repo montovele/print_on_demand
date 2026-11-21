@@ -8,6 +8,7 @@ interface PublishableProduct {
 export const storefrontDesignerProductTypes = [
   "tshirt",
   "hoodie",
+  "socks",
   "mug",
   "tumbler",
   "tote",

@@ -7,6 +7,7 @@ describe("own-production product templates", () => {
     expect(new Set(ids).size).toBe(ids.length);
     expect(ids).toEqual(expect.arrayContaining([
       "tshirt",
+      "socks",
       "mug",
       "tote",
       "pillow",
@@ -33,6 +34,7 @@ describe("own-production product templates", () => {
 
   it("recognizes supported templates without accepting arbitrary identifiers", () => {
     expect(isProductTemplateId("tshirt")).toBe(true);
+    expect(isProductTemplateId("socks")).toBe(true);
     expect(isProductTemplateId("mug")).toBe(true);
     expect(isProductTemplateId("label-sheet")).toBe(true);
     expect(isProductTemplateId("label-roll")).toBe(true);

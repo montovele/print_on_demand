@@ -695,6 +695,7 @@ tbody tr:last-child td { border-bottom: 0; }
 .mockup-shape .mockup-rim { fill: none; stroke: #ffffff75; stroke-width: 6; }
 .mockup-shape .poster-inner { fill: none; stroke: #ffffffab; stroke-width: 2; }
 .mockup-mug .mockup-shape, .mockup-bottle .mockup-shape { width: 72%; height: 75%; }
+.mockup-socks .mockup-shape { width: 72%; height: 82%; }
 .mockup-poster .mockup-shape { width: 68%; height: 83%; }
 .mockup-pillow .mockup-shape, .mockup-puzzle .mockup-shape, .mockup-mousepad .mockup-shape { width: 78%; height: 76%; }
 .mockup-keychain .mockup-shape { width: 62%; height: 78%; }
@@ -738,6 +739,8 @@ tbody tr:last-child td { border-bottom: 0; }
 .published-catalog-products { margin-top: 42px; }
 .published-catalog-heading { margin-bottom: 18px; text-align: center; }
 .published-catalog-heading h3 { margin: 8px 0; color: #323a34; font-size: 18px; }
+.published-catalog-section + .published-catalog-section { margin-top: 28px; }
+.published-catalog-section-title { margin: 0 0 12px; color: #526457; font: 600 13px/1.4 Manrope, sans-serif; }
 .published-catalog-heading p, .published-catalog-product-description { color: #898b84; font-size: 10px; line-height: 1.6; }
 .published-catalog-product-visual { align-content: center; justify-items: center; gap: 12px; padding: 24px; color: #526457; text-align: center; }
 .published-catalog-product-icon { display: grid; width: 68px; height: 68px; place-items: center; border: 1px solid #ffffffa6; border-radius: 50%; background: #ffffff65; font-size: 34px; }

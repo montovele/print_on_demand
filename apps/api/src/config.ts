@@ -22,7 +22,10 @@ const configSchema = z.object({
   PRINTFUL_ACCESS_TOKEN: z.string().optional(),
   STRIPE_SECRET_KEY: z.string().optional(),
   STRIPE_WEBHOOK_SECRET: z.string().optional(),
-  STOREFRONT_TENANT_ID: z.string().trim().min(1).optional(),
+  STOREFRONT_TENANT_ID: z.preprocess(
+    (value) => typeof value === "string" && !value.trim() ? undefined : value,
+    z.string().trim().min(1).optional(),
+  ),
   UPS_CLIENT_ID: z.string().optional(),
   UPS_CLIENT_SECRET: z.string().optional(),
   UPS_ACCOUNT_NUMBER: z.string().optional(),

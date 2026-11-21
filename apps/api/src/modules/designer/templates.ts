@@ -20,6 +20,16 @@ export const productTemplates = [
     shape: "hoodie",
   },
   {
+    id: "socks",
+    name: "Calcetines",
+    category: "Ropa",
+    material: "Algodón / poliéster",
+    printMethods: ["Sublimación", "DTF"],
+    sizes: ["22–24", "25–27", "28–30"],
+    printArea: { x: 35, y: 34, width: 30, height: 38 },
+    shape: "socks",
+  },
+  {
     id: "mug",
     name: "Taza",
     category: "Bebidas",

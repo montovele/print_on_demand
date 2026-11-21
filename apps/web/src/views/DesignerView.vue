@@ -560,6 +560,11 @@ onBeforeUnmount(() => {
               <path d="M222 79q28-16 56 0l16 35q-44 27-88 0zM250 115v96M187 163l-20 27m146-27 20 27" />
             </g>
           </g>
+          <g v-else-if="template.shape === 'socks'" filter="url(#mockup-shadow)">
+            <path :fill="design.color" d="M145 83h76v157q0 26-24 42l-54 37q-24 16-9 37t46 6l69-43q30-19 30-58V83h-76v135l-58 34z" />
+            <path fill="url(#garment-shade)" d="M145 83h76v157q0 26-24 42l-54 37q-24 16-9 37t46 6l69-43q30-19 30-58V83h-76v135l-58 34z" />
+            <path d="M145 83h76m6 0h76m-174 271q-18-15-8-35m172-5q13 17 2 34" fill="none" stroke="#292a2d" stroke-opacity=".18" stroke-width="4" />
+          </g>
           <g v-else-if="template.shape === 'mug'" filter="url(#mockup-shadow)">
             <path v-if="!isBackView" d="M344 187h44q57 0 57 70t-57 70h-44v-25h42q31 0 31-45t-31-45h-42z" fill="#e1e2e8" stroke="#c9cad2" stroke-width="5" />
             <path v-else d="M129 187H85q-57 0-57 70t57 70h44v-25H87q-31 0-31-45t31-45h42z" fill="#e1e2e8" stroke="#c9cad2" stroke-width="5" />

@@ -1,0 +1,193 @@
+# ============================================================
+# SSAXXON E-COMMERCE
+# ============================================================
+
+server {
+    listen 80;
+    listen [::]:80;
+
+    server_name ssaxxon.com www.ssaxxon.com;
+
+    return 301 https://$host$request_uri;
+}
+
+server {
+    listen 443 ssl;
+    listen [::]:443 ssl;
+
+    server_name ssaxxon.com www.ssaxxon.com;
+
+    root /var/www/ssaxxon/ssaxxon_ecommerce/dist;
+    index index.html;
+
+    ssl_certificate     /etc/ssl/cloudflare/ssaxxon-origin.pem;
+    ssl_certificate_key /etc/ssl/cloudflare/ssaxxon-origin.key;
+
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+}
+
+
+# ============================================================
+# SSAXXON APP / SISTEMA
+# ============================================================
+
+server {
+    listen 80;
+    listen [::]:80;
+
+    server_name app.ssaxxon.com;
+
+    return 301 https://$host$request_uri;
+}
+
+server {
+    listen 443 ssl;
+    listen [::]:443 ssl;
+
+    server_name app.ssaxxon.com;
+
+    root /var/www/ssaxxon/frontend_ssaxxon/dist;
+    index index.html;
+
+    ssl_certificate     /etc/ssl/cloudflare/ssaxxon-origin.pem;
+    ssl_certificate_key /etc/ssl/cloudflare/ssaxxon-origin.key;
+
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+}
+
+
+# ============================================================
+# SSAXXON API - NODE / EXPRESS
+# ============================================================
+
+server {
+    listen 80;
+    listen [::]:80;
+
+    server_name api.ssaxxon.com;
+
+    return 301 https://$host$request_uri;
+}
+
+server {
+    listen 443 ssl;
+    listen [::]:443 ssl;
+
+    server_name api.ssaxxon.com;
+
+    ssl_certificate     /etc/ssl/cloudflare/ssaxxon-origin.pem;
+    ssl_certificate_key /etc/ssl/cloudflare/ssaxxon-origin.key;
+
+    location / {
+
+        proxy_pass http://127.0.0.1:3001;
+
+        proxy_http_version 1.1;
+
+        proxy_set_header Host $host;
+
+        proxy_set_header X-Real-IP $remote_addr;
+
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        # =================================================
+        # SSE
+        # =================================================
+
+        proxy_buffering off;
+
+        proxy_cache off;
+
+        proxy_read_timeout 3600s;
+
+        proxy_send_timeout 3600s;
+
+        proxy_connect_timeout 60s;
+
+        proxy_set_header Connection "";
+
+        proxy_set_header X-Accel-Buffering no;
+    }
+}
+
+# ============================================================
+# LEMARQUET - LANDING PAGE
+# ============================================================
+
+server {
+    listen 80;
+    listen [::]:80;
+
+    server_name lemarquet.com www.lemarquet.com;
+
+    return 301 https://$host$request_uri;
+}
+
+server {
+    listen 443 ssl;
+    listen [::]:443 ssl;
+
+    server_name lemarquet.com www.lemarquet.com;
+
+    root /var/www/ssaxxon/lemarquet/dist;
+    index index.html;
+
+    # ========================================================
+    # CERTIFICADO CLOUDFLARE ORIGIN
+    # ========================================================
+    # Se cambiará por el certificado específico de
+    # lemarquet.com después de generarlo en Cloudflare.
+    #
+    # ssl_certificate     /etc/ssl/cloudflare/lemarquet-origin.pem;
+    # ssl_certificate_key /etc/ssl/cloudflare/lemarquet-origin.key;
+
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+}
+
+
+# ============================================================
+# E-COMMERCE DEMO - WORDPRESS / WOOCOMMERCE
+# ============================================================
+
+server {
+    listen 80;
+    listen [::]:80;
+
+    server_name ecommercedemo.ssaxxon.com;
+
+    return 301 https://$host$request_uri;
+}
+
+server {
+    listen 443 ssl;
+    listen [::]:443 ssl;
+
+    server_name ecommercedemo.ssaxxon.com;
+
+    root /var/www/ssaxxon/wordpress;
+    index index.php index.html;
+
+    ssl_certificate     /etc/ssl/cloudflare/ssaxxon-origin.pem;
+    ssl_certificate_key /etc/ssl/cloudflare/ssaxxon-origin.key;
+
+    location / {
+        try_files $uri $uri/ /index.php?$args;
+    }
+
+    location ~ \.php$ {
+        include snippets/fastcgi-php.conf;
+        fastcgi_pass unix:/run/php/php8.3-fpm.sock;
+    }
+
+    location ~ /\.ht {
+        deny all;
+    }
+}

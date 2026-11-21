@@ -1,7 +1,16 @@
 import { describe, expect, it } from "vitest";
-import { getProductPublicationSkipReason } from "./bulk-publication.js";
+import { getProductPublicationSkipReason, storefrontDesignerProductTypes } from "./bulk-publication.js";
 
 describe("getProductPublicationSkipReason", () => {
+  it("supports publication for the requested custom product types", () => {
+    expect(storefrontDesignerProductTypes).toEqual(expect.arrayContaining([
+      "tshirt",
+      "mug",
+      "tumbler",
+      "socks",
+    ]));
+  });
+
   it("allows in-house products when every variant has a sale price", () => {
     expect(getProductPublicationSkipReason({
       fulfillmentMode: "in_house",
